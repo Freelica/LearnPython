@@ -1,0 +1,38 @@
+#!/usr/bin/python
+#--coding: utf-8 --
+import pymysql
+import json
+
+db = pymysql.connect(host='localhost',user='root',password='passw0rd',db='pyDBtest',charset='utf8',use_unicode=True)
+cursor = db.cursor()
+
+sql = "select*from employee"
+cursor.execute(sql)
+results = cursor.fetchall()
+
+try:
+    # Converting data into Json file
+    list_of_dict = []      
+    for row in results:
+        data = {} 
+        data['First Name'] = row[0]
+        data['Last Name'] = row[1]
+        data['Age'] = row[2]
+        data['Sex'] = row[3]
+        data['Money'] = row[4]
+
+        list_of_dict.append(data) 
+
+    # Create data.json file after get data from Convert
+    with open('list_of_dict.json', 'w', encoding='utf-8') as outfile:
+        json.dump(list_of_dict, outfile, ensure_ascii=False)
+
+    # open data.json
+    with open('list_of_dict.json') as data_file:
+        data_loaded = json.load(data_file)
+
+    print(list_of_dict == data_loaded)
+
+except:
+    print("Error")
+db.close()
